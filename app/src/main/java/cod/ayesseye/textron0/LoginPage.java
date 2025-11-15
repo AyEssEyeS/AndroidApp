@@ -1,5 +1,6 @@
 package cod.ayesseye.textron0;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -106,12 +107,18 @@ public class LoginPage extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(this, "Signed in: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                        goToMainPage();
                         //Adaugam intent to main page
                     } else {
                         Toast.makeText(this, "Loging failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
 
                 });
+    }
+
+    private void goToMainPage(){
+        Intent myIntent = new Intent(this, MainActivity.class);
+        startActivity(myIntent);
     }
 
 }
