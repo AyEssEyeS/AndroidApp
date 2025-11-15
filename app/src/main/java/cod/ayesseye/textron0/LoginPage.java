@@ -1,7 +1,6 @@
 package cod.ayesseye.textron0;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,7 +12,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.firebase.Firebase;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -50,9 +48,9 @@ public class LoginPage extends AppCompatActivity {
         createUser.setOnClickListener(v -> {
             modeCreate = true;
 
-            promptUser.setHint("Create Email");
-            promptPass.setHint("Create Password");
-            btn.setText("Create Account");
+            promptUser.setHint("Enter Email");
+            promptPass.setHint("Enter Password");
+            btn.setText(R.string.create_account);
 
             Toast.makeText(this, "Create new account", Toast.LENGTH_LONG).show();
         });
@@ -62,7 +60,7 @@ public class LoginPage extends AppCompatActivity {
 
             promptUser.setHint("Email");
             promptPass.setHint("Password");
-            btn.setText("Login");
+            btn.setText(R.string.login_button);
 
             Toast.makeText(this, "Sign in to your account", Toast.LENGTH_SHORT).show();
         });
