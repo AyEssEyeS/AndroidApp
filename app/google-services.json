@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "324984636646",
+    "project_id": "textron0-9c9fe",
+    "storage_bucket": "textron0-9c9fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:324984636646:android:db28e572d6fd10e005e727",
+        "android_client_info": {
+          "package_name": "cod.ayesseye.textron0"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmu6N3TUc85MuD-_FMesTYgn5f04kGALc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

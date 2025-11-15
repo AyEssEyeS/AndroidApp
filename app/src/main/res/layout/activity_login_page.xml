@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/mountains_background"
+    tools:context=".LoginPage">
+    <View
+        android:id="@+id/blurLayer"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:background="#40FFFFFF"
+        android:layout_marginTop="200dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="#00FFFFEE"
+        >
+
+        <EditText
+            android:id="@+id/promptUser"
+            android:layout_width="200dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/edittext_border"
+            android:hint="@string/prompt_email"
+            android:textAlignment="center"
+            android:textColorHint="@color/login_button_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <EditText
+            android:id="@+id/promptPassword"
+            android:layout_width="200dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/edittext_border"
+            android:hint="@string/prompt_password"
+            android:inputType="textPassword"
+            android:textAlignment="center"
+            android:textColorHint="@color/login_button_color"
+            app:layout_constraintStart_toStartOf="@id/promptUser"
+            app:layout_constraintEnd_toEndOf="@id/promptUser"
+            app:layout_constraintTop_toBottomOf="@id/promptUser"/>
+
+        <TextView
+            android:id="@+id/createUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="@string/create_user"
+            android:textIsSelectable="false"
+            android:clickable="true"
+            app:layout_constraintStart_toStartOf="@id/promptPassword"
+            app:layout_constraintTop_toBottomOf="@id/promptPassword"/>
+
+        <TextView
+            android:id="@+id/signIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="@string/sign_in"
+            android:textIsSelectable="false"
+            android:clickable="true"
+            android:textColorHighlight="#00A8FF"
+            app:layout_constraintEnd_toEndOf="@id/promptPassword"
+            app:layout_constraintTop_toBottomOf="@id/promptPassword"/>
+
+
+        <Button
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/login_button"
+            android:text="@string/login_button"
+            android:textColor="@color/login_button_color"
+            app:backgroundTint="@null"
+            app:layout_constraintStart_toStartOf="@id/promptPassword"
+            app:layout_constraintEnd_toEndOf="@id/promptPassword"
+            app:layout_constraintTop_toBottomOf="@id/promptPassword"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
