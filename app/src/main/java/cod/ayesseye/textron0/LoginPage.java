@@ -24,6 +24,7 @@ public class LoginPage extends AppCompatActivity {
     EditText promptUser, promptPass;
     TextView createUser, signIn;
     Button btn;
+    String clearText = "";
 
     boolean modeCreate = false;
 
@@ -50,10 +51,11 @@ public class LoginPage extends AppCompatActivity {
         //Setare buton de creare cont
         createUser.setOnClickListener(v -> {
             modeCreate = true;
-
+            promptUser.setText(clearText);             // Eliberare camp
             promptUser.setHint("Enter Email");
             promptPass.setHint("Enter Password");
             btn.setText(R.string.create_account);
+
 
             Toast.makeText(this, "Create new account", Toast.LENGTH_LONG).show();
         });
@@ -61,6 +63,7 @@ public class LoginPage extends AppCompatActivity {
         signIn.setOnClickListener(v -> {
             modeCreate = false;
 
+            promptPass.setText(clearText);             //Eliberare camp pe apasare
             promptUser.setHint("Email");
             promptPass.setHint("Password");
             btn.setText(R.string.login_button);
@@ -94,8 +97,16 @@ public class LoginPage extends AppCompatActivity {
                    if (task.isSuccessful()) {
                        FirebaseUser user = mAuth.getCurrentUser();
                        Toast.makeText(this, "Account created" + user.getEmail(), Toast.LENGTH_LONG).show();
+
+                       //Schimbare pe login
+                       modeCreate = false;
+                       promptUser.setHint("Email");
+                       promptPass.setHint("Password");
+                       btn.setText(R.string.login_button);
+                       promptPass.setText(clearText);
                    } else {
                        Toast.makeText(this, "Error" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                       promptPass.setText(clearText);
                    }
                 });
     }
@@ -107,12 +118,11 @@ public class LoginPage extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(this, "Signed in: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                        goToMainPage();
-                        //Adaugam intent to main page
+                        goToMainPage();        //Adaugam intent to main page
                     } else {
-                        Toast.makeText(this, "Loging failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Logging in failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        promptPass.setText(clearText);
                     }
-
                 });
     }
 
