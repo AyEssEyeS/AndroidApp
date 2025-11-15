@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class LoginPage extends AppCompatActivity {
@@ -45,6 +46,7 @@ public class LoginPage extends AppCompatActivity {
         createUser = findViewById(R.id.createUser);
         btn = findViewById(R.id.login_button);
 
+        //Setare buton de creare cont
         createUser.setOnClickListener(v -> {
             modeCreate = true;
 
@@ -54,7 +56,7 @@ public class LoginPage extends AppCompatActivity {
 
             Toast.makeText(this, "Create new account", Toast.LENGTH_LONG).show();
         });
-
+        //Setare buton de logare
         signIn.setOnClickListener(v -> {
             modeCreate = false;
 
@@ -65,5 +67,51 @@ public class LoginPage extends AppCompatActivity {
             Toast.makeText(this, "Sign in to your account", Toast.LENGTH_SHORT).show();
         });
 
+        //Creare functionalitate buton si cerere completare field in cazul in care nu sunt completate
+        btn.setOnClickListener(v -> {
+            String email = promptUser.getText().toString().trim();
+            String password = promptPass.getText().toString().trim();
+
+            if (email.isEmpty() || password.isEmpty()){
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_LONG).show();
+                return;
+            }if (modeCreate) {
+                createAccount(email, password);
+            } else {
+                signInUser(email,password);
+            }
+
+        });
+
+
+
     }
+
+    private void createAccount(String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                   if (task.isSuccessful()) {
+                       FirebaseUser user = mAuth.getCurrentUser();
+                       Toast.makeText(this, "Account created" + user.getEmail(), Toast.LENGTH_LONG).show();
+                   } else {
+                       Toast.makeText(this, "Error" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                   }
+                });
+    }
+
+
+    private void signInUser(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        Toast.makeText(this, "Signed in: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                        //Adaugam intent to main page
+                    } else {
+                        Toast.makeText(this, "Loging failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
+                });
+    }
+
 }
