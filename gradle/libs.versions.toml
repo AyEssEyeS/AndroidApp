@@ -1,5 +1,6 @@
 [versions]
 agp = "8.13.1"
+blurview = "1.6.6"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
@@ -12,6 +13,7 @@ lifecycleLivedataKtx = "2.6.1"
 lifecycleViewmodelKtx = "2.6.1"
 
 [libraries]
+blurview = { module = "com.github.Dimezis:BlurView", version.ref = "blurview" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

@@ -7,6 +7,7 @@ android {
     namespace = "cod.ayesseye.textron0"
     compileSdk = 36
 
+
     defaultConfig {
         applicationId = "cod.ayesseye.textron0"
         minSdk = 24
@@ -34,6 +35,7 @@ android {
         viewBinding = true
     }
 }
+
 
 dependencies {
 
