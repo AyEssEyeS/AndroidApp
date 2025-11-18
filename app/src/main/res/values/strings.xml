@@ -1,10 +1,16 @@
 <resources>
-    <string name="app_name">Textron0</string>
-    <string name="title_activity_login">Login</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="login_button">Login</string>
-    <string name="create_account">Create Account</string>
-    <string name="welcome">Welcome !</string>
-    <string name="sign_in">Sign In</string>
+    <string name="app_name">Textron0</string>>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="login_mail">Enter your email</string>
+    <string name="login_password">Enter your password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="different_login">Or login with</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="different_register">Or Register with</string>
+    <string name="back_button">&lt;</string>
+    <string name="background_image">Man Running</string>
 </resources>
