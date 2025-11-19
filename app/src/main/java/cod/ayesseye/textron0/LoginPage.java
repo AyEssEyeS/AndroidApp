@@ -1,11 +1,12 @@
     package cod.ayesseye.textron0;
 
     import android.content.Intent;
-
     import android.os.Bundle;
+    import android.text.InputType;
+    import android.util.Log;
     import android.view.View;
+    import android.widget.Button;
     import android.widget.Toast;
-
 
     import androidx.activity.EdgeToEdge;
     import androidx.appcompat.app.AppCompatActivity;
@@ -13,19 +14,18 @@
     import androidx.core.view.ViewCompat;
     import androidx.core.view.WindowInsetsCompat;
 
-
-    import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-    import com.google.firebase.FirebaseApp;
-    import com.google.firebase.auth.AuthCredential;
-    import com.google.firebase.auth.FirebaseAuth;
-
-    import com.google.firebase.auth.FirebaseUser;
-    import com.google.firebase.auth.GoogleAuthProvider;
-    import com.google.firebase.firestore.FirebaseFirestore;
     import com.google.android.gms.auth.api.signin.GoogleSignIn;
     import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
     import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+    import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
     import com.google.android.gms.common.api.ApiException;
+    import com.google.firebase.FirebaseApp;
+    import com.google.firebase.auth.AuthCredential;
+    import com.google.firebase.auth.FirebaseAuth;
+    import com.google.firebase.auth.FirebaseUser;
+    import com.google.firebase.auth.GoogleAuthProvider;
+    import com.google.firebase.auth.OAuthProvider;
+    import com.google.firebase.firestore.FirebaseFirestore;
 
     import java.util.HashMap;
     import java.util.Map;
@@ -41,6 +41,7 @@
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         GoogleSignInClient mGoogleSignInClient;
+
         boolean loginbool = false;
         boolean registerbool = false;
 
@@ -74,6 +75,8 @@
                 performLogin();
             });
             binding.googleSignInButton.setOnClickListener(v -> signInWithGoogle());
+
+            gitHubLogin(binding.btnGithubLogin);
         }
 
 
@@ -107,6 +110,9 @@
             binding.registerUsername.setVisibility(View.GONE);
             binding.finalRegister.setVisibility(View.GONE);
             binding.finalLogin.setVisibility(View.GONE);
+            binding.loginShow.setVisibility(View.GONE);
+            binding.registerShow.setVisibility(View.GONE);
+            binding.btnGithubLogin.setVisibility(View.GONE);
         }
 
         private void setupButtonListeners() {
@@ -131,6 +137,21 @@
             binding.differentLogin.setVisibility(View.VISIBLE);
             binding.backButton.setVisibility(View.VISIBLE);
             binding.finalLogin.setVisibility(View.VISIBLE);
+            binding.loginShow.setVisibility(View.VISIBLE);
+            binding.btnGithubLogin.setVisibility(View.VISIBLE);
+
+            /// Creates logic for show password checkbox
+            binding.loginShow.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    binding.loginPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                } else {
+                    binding.loginPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+                //sets cursor to the spot it last was on
+                binding.loginPassword.setSelection(binding.loginPassword.getText().length());
+            });
+
+
         }
 
         private void showRegisterUI () {
@@ -150,6 +171,21 @@
             binding.registerConfirm.setVisibility(View.VISIBLE);
             binding.finalRegister.setVisibility(View.VISIBLE);
             binding.differentRegister.setVisibility(View.VISIBLE);
+            binding.registerShow.setVisibility(View.VISIBLE);
+            binding.btnGithubLogin.setVisibility(View.VISIBLE);
+
+            binding.registerShow.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    binding.registerPass.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    binding.registerConfirm.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                } else {
+                    binding.registerPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    binding.registerConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+
+                binding.registerPass.setSelection(binding.registerPass.getText().length());
+                binding.registerConfirm.setSelection(binding.registerConfirm.getText().length());
+            });
         }
 
         private void performRegister () {
@@ -157,6 +193,11 @@
             String email = binding.registerMail.getText().toString().trim();
             String password = binding.registerPass.getText().toString().trim();
             String confirm = binding.registerConfirm.getText().toString().trim();
+
+            if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             if (!password.equals(confirm)) {
                 Toast.makeText(this, "Passwords do not match!", Toast.LENGTH_LONG).show();
@@ -196,6 +237,7 @@
         private void performLogin () {
             String identifier = binding.loginMail.getText().toString().trim();
             String password = binding.loginPassword.getText().toString().trim();
+
 
             if (identifier.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Fill al fields", Toast.LENGTH_SHORT).show();
@@ -276,6 +318,45 @@
                     });
         }
 
+
+        private void gitHubLogin(Button button) {
+            button.setOnClickListener(v -> {
+                OAuthProvider.Builder provider = OAuthProvider.newBuilder("github.com");
+                provider.addCustomParameter("scope", "user:email");
+
+
+                FirebaseAuth.getInstance()
+                        .startActivityForSignInWithProvider(this, provider.build())
+                        .addOnSuccessListener(authResult -> {
+                            FirebaseUser user = authResult.getUser();
+                            Log.d("GitHubLogin", "Succes! User: " + user.getUid());
+
+                            String email = user.getEmail();
+                            String name = user.getDisplayName();
+
+                            if (email == null) {
+                                Log.w("GitHubLogin", "Email not returned. User has a private GitHub email.");
+                            }
+
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("email", email);
+                            data.put("username", name);
+
+                            db.collection("users")
+                                    .document(user.getUid())
+                                    .set(data)
+                                    .addOnSuccessListener(unused ->  Log.d("Firestore", "GitHub user saved"))
+                                    .addOnFailureListener(e -> Log.e("Firestore", "Error" + e));
+                            Toast.makeText(this, "Logged in as " + name, Toast.LENGTH_LONG).show();
+
+                            changePage();
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("GitHubLogin", "Error: " + e.getMessage());
+                            Toast.makeText(this, "GitHub Login Failed", Toast.LENGTH_LONG).show();
+                        });
+            });
+        }
     }
 
 

@@ -102,6 +102,7 @@
         android:textSize="20sp"
         android:layout_marginTop="60dp"
         android:inputType="text"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/login_title" />
@@ -117,6 +118,7 @@
         android:textSize="20sp"
         android:layout_marginTop="20dp"
         android:autofillHints="password"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/login_mail"/>
@@ -127,9 +129,10 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        android:text="@string/forgot_password"
-        android:textSize="25sp"
-        android:layout_marginTop="5dp"
+        android:text=""
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/login_password"
         app:layout_constraintTop_toBottomOf="@id/login_password"
     />
@@ -141,10 +144,11 @@
         android:text="@string/different_login"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/final_login"/>
+        app:layout_constraintBottom_toTopOf="@id/googleSignInButton"/>
 
     <Button
         android:id="@+id/final_login"
@@ -158,6 +162,7 @@
         android:textSize="15sp"
         android:textScaleX="0.8"
         android:layout_marginTop="20dp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/forgot_pass"/>
@@ -170,8 +175,8 @@
         android:hint="@string/username"
         android:padding="12dp"
         android:textSize="20sp"
-        android:layout_marginTop="60dp"
-        android:visibility="gone"
+        android:layout_marginTop="40dp"
+
         android:inputType="text"
         android:autofillHints="name"
         app:layout_constraintEnd_toEndOf="parent"
@@ -187,7 +192,7 @@
         android:padding="12dp"
         android:textSize="20sp"
         android:layout_marginTop="20dp"
-        android:visibility="gone"
+
         android:inputType="text"
         android:autofillHints="emailAddress"
         app:layout_constraintEnd_toEndOf="parent"
@@ -204,7 +209,7 @@
         android:textSize="20sp"
         android:layout_marginTop="20dp"
         android:inputType="textPassword"
-        android:visibility="gone"
+
         android:autofillHints="password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -220,7 +225,7 @@
         android:textSize="20sp"
         android:layout_marginTop="20dp"
         android:inputType="textPassword"
-        android:visibility="gone"
+
         android:autofillHints="password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -234,10 +239,11 @@
         android:text="@string/different_register"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:visibility="gone"
+        android:layout_marginBottom="10dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/final_register" />
+        app:layout_constraintBottom_toTopOf="@id/googleSignInButton" />
 
     <Button
         android:id="@+id/back_button"
@@ -249,7 +255,7 @@
         android:textSize="30sp"
         app:backgroundTint="@null"
         android:layout_marginTop="5dp"
-        android:visibility="gone"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -263,12 +269,46 @@
         android:scaleY="1.2"
         android:textSize="20sp"
         android:textScaleX="0.8"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         app:backgroundTint="@color/black"
-        android:visibility="gone"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/register_confirm"/>
+
+    <CheckBox
+        android:id="@+id/login_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/show_password"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/forgot_pass"
+        app:layout_constraintStart_toStartOf="@id/login_password"
+        app:layout_constraintTop_toBottomOf="@id/login_password"/>
+
+    <CheckBox
+        android:id="@+id/register_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/show_password"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@id/register_confirm"
+        app:layout_constraintStart_toStartOf="@id/register_confirm"
+        app:layout_constraintTop_toBottomOf="@id/register_confirm"/>
+
+    <Button
+        android:id="@+id/btnGithubLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/login_button"
+        android:text="GitHub"
+        app:backgroundTint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
