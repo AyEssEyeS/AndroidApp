@@ -18,7 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button goToOpenWeather;
+    Button goToOpenWeather, goToGoogleMaps;
 
 
 
@@ -35,12 +35,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         goToOpenWeather = findViewById(R.id.open_weather);
+        goToGoogleMaps = findViewById(R.id.google_maps);
 
-        goToOpenWeather.setOnClickListener(v -> changePage());
+        goToOpenWeather.setOnClickListener(v -> changePage(OpenWeather.class));
+        goToGoogleMaps.setOnClickListener(v -> changePage(MapsActivity.class));
+
 
     }
-        private void changePage() {
-        Intent intent = new Intent(this, OpenWeather.class);
+        private void changePage(Class<?> targetActivity) {
+        Intent intent = new Intent(this, targetActivity);
         startActivity(intent);
     }
 }

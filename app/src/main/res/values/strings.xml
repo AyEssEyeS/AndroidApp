@@ -18,4 +18,5 @@
     <string name="register_title">Hello! Register to get started</string>
     <string name="show_password">Show password</string>
     <string name="default_web_client_id">324984636646-a2q84afa3r4iaceicov0qtqhad4dae45.apps.googleusercontent.com</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
