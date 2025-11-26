@@ -133,10 +133,10 @@ public class OpenWeather extends AppCompatActivity {
                         JSONObject weather = weatherArr.getJSONObject(0);
                         String description = weather.getString("description");
 
-                        tvCity.setText(R.string.city + city);
+                        tvCity.setText(getString(R.string.city) + " " + city);
                         tvTemperature.setText(getString(R.string.temperature, temp));
-                        tvDescription.setText(R.string.description + description);
-                        tvHumidity.setText(R.string.humidity + humidity);
+                        tvDescription.setText(getString(R.string.description) + " " + description);
+                        tvHumidity.setText(getString(R.string.humidity)  + " " + humidity + "%");
 
                     } catch (JSONException e) {
                         tvCity.setText(R.string.city_error);

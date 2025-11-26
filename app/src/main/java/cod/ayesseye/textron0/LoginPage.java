@@ -273,7 +273,6 @@
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Toast.makeText(this, "Login succesfull", Toast.LENGTH_SHORT).show();
-
                             changePage();
                         } else {
                             Exception e = task.getException();

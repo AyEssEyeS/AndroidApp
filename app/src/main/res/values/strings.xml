@@ -23,7 +23,7 @@
     <string name="city">City: </string>
     <string name="temperature">Temperature: %1$.1f°C</string>
     <string name="description">Description: </string>
-    <string name="humidity">Humidity: %1$s%</string>
+    <string name="humidity">Humidity: </string>
     <string name="city_error">City: Error</string>
     <string name="temperature_na">Temperature: N/A</string>
     <string name="description_na">Description: N/A</string>
