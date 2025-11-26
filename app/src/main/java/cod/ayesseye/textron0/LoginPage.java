@@ -29,6 +29,7 @@
 
     import java.util.HashMap;
     import java.util.Map;
+    import java.util.Objects;
 
     import cod.ayesseye.textron0.databinding.ActivityLoginPageBinding;
 
@@ -229,7 +230,9 @@
                                     });
 
                         } else {
-                            Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Exception e = task.getException();
+                            String message = (e != null) ? e.getMessage() : "Unknown error occurred";
+                            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                         }
                     });
         }
@@ -273,7 +276,9 @@
 
                             changePage();
                         } else {
-                            Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Exception e = task.getException();
+                            String message = (e != null) ? e.getMessage() : "Unknown error occurred";
+                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                         }
                     });
         }
@@ -310,10 +315,20 @@
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(this, "Google login successful: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+
+
+                            Toast.makeText(this,
+                                    "Google login successful: " + Objects.requireNonNull(user).getEmail(),
+                                    Toast.LENGTH_SHORT).show();
+
                             changePage();
                         } else {
-                            Toast.makeText(this, "Firebase auth failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Exception e = task.getException();
+                            String message = (e != null) ? e.getMessage() : "Unknown error occurred";
+
+                            Toast.makeText(this,
+                                    message,
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
         }
@@ -329,7 +344,7 @@
                         .startActivityForSignInWithProvider(this, provider.build())
                         .addOnSuccessListener(authResult -> {
                             FirebaseUser user = authResult.getUser();
-                            Log.d("GitHubLogin", "Succes! User: " + user.getUid());
+                            Log.d("GitHubLogin", "Succes! User: " + Objects.requireNonNull(user).getUid());
 
                             String email = user.getEmail();
                             String name = user.getDisplayName();

@@ -19,4 +19,13 @@
     <string name="show_password">Show password</string>
     <string name="default_web_client_id">324984636646-a2q84afa3r4iaceicov0qtqhad4dae45.apps.googleusercontent.com</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="fetching_location">Fetching location…</string>
+    <string name="city">City: </string>
+    <string name="temperature">Temperature: %1$.1f°C</string>
+    <string name="description">Description: </string>
+    <string name="humidity">Humidity: %1$s%</string>
+    <string name="city_error">City: Error</string>
+    <string name="temperature_na">Temperature: N/A</string>
+    <string name="description_na">Description: N/A</string>
+    <string name="humidity_na">Humidity: N/A</string>
 </resources>

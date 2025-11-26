@@ -30,8 +30,8 @@ import org.json.JSONObject;
 
 public class OpenWeather extends AppCompatActivity {
 
-    private static final int LOCATION_REQUEST_CODE = 1001; /// ID folosit cand cerem permisiuni
-    private FusedLocationProviderClient fusedLocationClient; /// Obiect GPlayServ care preia locatia curent
+    private static final int LOCATION_REQUEST_CODE = 1001; // ID folosit cand cerem permisiuni
+    private FusedLocationProviderClient fusedLocationClient; // Obiect GPlayServ care preia locatia curent
 
     private static final String API_KEY = "3496e86f154d566be3a095951868974f";
 
@@ -71,7 +71,7 @@ public class OpenWeather extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NotNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, int @NotNull [] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == LOCATION_REQUEST_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -88,7 +88,7 @@ public class OpenWeather extends AppCompatActivity {
         }
 
         progressBar.setVisibility(TextView.VISIBLE);
-        tvCity.setText("Fetching location...");
+        tvCity.setText(R.string.fetching_location);
 
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(location -> {
@@ -133,24 +133,28 @@ public class OpenWeather extends AppCompatActivity {
                         JSONObject weather = weatherArr.getJSONObject(0);
                         String description = weather.getString("description");
 
-                        tvCity.setText("City: " + city);
-                        tvTemperature.setText("Temperature: " + temp + "°C");
-                        tvDescription.setText("Description: " + description);
-                        tvHumidity.setText("Humidity: " + humidity + "%");
+                        tvCity.setText(R.string.city + city);
+                        tvTemperature.setText(getString(R.string.temperature, temp));
+                        tvDescription.setText(R.string.description + description);
+                        tvHumidity.setText(R.string.humidity + humidity);
 
                     } catch (JSONException e) {
-                        tvCity.setText("City: Error");
-                        Toast.makeText(this, "Parsing error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        tvCity.setText(R.string.city_error);
+                        Toast.makeText(this,
+                                "Parsing error: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(this, "Weather fetch failed.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,
+                            "Weather fetch failed.",
+                            Toast.LENGTH_LONG).show();
 
-                    tvCity.setText("City: Error");
-                    tvTemperature.setText("Temperature: N/A");
-                    tvDescription.setText("Description: N/A");
-                    tvHumidity.setText("Humidity: N/A");
+                    tvCity.setText(R.string.city_error);
+                    tvTemperature.setText(R.string.temperature_na);
+                    tvDescription.setText(R.string.description_na);
+                    tvHumidity.setText(R.string.humidity_na);
                 }
         );
         AppController.getInstance().addToRequestQueue(request);
