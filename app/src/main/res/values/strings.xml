@@ -28,4 +28,8 @@
     <string name="temperature_na">Temperature: N/A</string>
     <string name="description_na">Description: N/A</string>
     <string name="humidity_na">Humidity: N/A</string>
+    <string name="home">Home</string>
+    <string name="weather">Weather</string>
+    <string name="start_walking">Start</string>
+    <string name="stop_walking">Stop</string>
 </resources>

@@ -19,65 +19,86 @@
     app:layout_constraintBottom_toTopOf="@id/bottomBar"
     />
 
+    <TextView
+        android:id="@+id/timerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" 0: 0"
+        android:textSize="26sp"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:padding="8dp"
+        android:elevation="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="230dp"
+        android:layout_gravity="bottom"
         android:padding="16dp"
-        android:elevation="20dp"
+        android:fitsSystemWindows="true"
         android:background="#99000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBack"
+            android:id="@+id/btn_home"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             style="@style/BottomBarButtonStyle"
-            android:text="Back"
-            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/home"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btnNext"
+            app:layout_constraintEnd_toStartOf="@id/btn_weather"
             app:layout_constraintStart_toStartOf="parent"
             />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnNext"
+            android:id="@+id/btn_weather"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             style="@style/BottomBarButtonStyle"
-            android:text="Next"
-            app:layout_constraintStart_toEndOf="@id/btnBack"
-            app:layout_constraintEnd_toStartOf="@id/btnStart"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStart"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            style="@style/BottomBarButtonStyle"
-            android:text="Start"
-            app:layout_constraintStart_toEndOf="@id/btnNext"
-            app:layout_constraintEnd_toStartOf="@id/btnStop"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStop"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            style="@style/BottomBarButtonStyle"
-            android:text="Stop"
-            app:layout_constraintStart_toEndOf="@id/btnStart"
+            android:text="@string/weather"
+            app:layout_constraintStart_toEndOf="@id/btn_home"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_start"
+            style="@style/BottomBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/start_walking"
+            app:layout_constraintBottom_toTopOf="@id/btn_home"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_stop"
+            style="@style/BottomBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/stop_walking"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_start"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_pause_resume"
+            style="@style/BottomBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Pause"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_stop"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
