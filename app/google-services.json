@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "324984636646",
+    "firebase_url": "https://textron0-9c9fe-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "textron0-9c9fe",
     "storage_bucket": "textron0-9c9fe.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "cod.ayesseye.textron0"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "324984636646-8gqcpuvpphii7cpbej697nc2ksqs3fcn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cod.ayesseye.textron0",
+            "certificate_hash": "9d4f3bf888b1770d6a1b6a97e5ce54bdd756f4b2"
+          }
+        },
+        {
+          "client_id": "324984636646-a2q84afa3r4iaceicov0qtqhad4dae45.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBmu6N3TUc85MuD-_FMesTYgn5f04kGALc"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "324984636646-a2q84afa3r4iaceicov0qtqhad4dae45.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
