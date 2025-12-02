@@ -21,13 +21,13 @@ import android.widget.TextView;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,12 +57,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     Button home, weather, startWalk, stopWalk, pauseResumeWalk;
 
-    private Handler handler = new Handler();
 
     //Route tracking variables
     private ArrayList<LatLng> routePoints = new ArrayList<>();
     private Polyline routePolyline;
-    private Marker lastMarker;
 
     //Location objects
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -72,7 +70,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private float totalDistanceMeters = 0f;
     private long startTimeMillis;
 
-    private Runnable locationRunnable;
 
 
 
@@ -111,7 +108,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stopWalk.setOnClickListener(v -> {
             stopTimer();
             stopTrackingRoute();
-            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         });
         pauseResumeWalk.setOnClickListener(v -> pauseResumeTimer());
     }
@@ -227,12 +223,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         totalDistanceMeters = 0f;  //Reset Distance
         routePoints.clear();
 
+
         //Creates LocationRequest for continuous GPS
-        com.google.android.gms.location.LocationRequest request =
-                com.google.android.gms.location.LocationRequest.create()
-                        .setInterval(2000)
-                        .setFastestInterval(1000)
-                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        LocationRequest request = new LocationRequest.Builder(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                2000
+        ).setMinUpdateIntervalMillis(1000)
+                .setMinUpdateDistanceMeters(0)
+                .build();
 
 
         //Build what happens on each GPS update | Android calls this every 2 secs
@@ -265,14 +263,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                //Save new point
                routePoints.add(point);
 
-                //Pace
-               String currentPace = getCurrentPace(segmentMeters);
-               String avgPace = getAveragePace();
-
-               Log.d("TRACKING", "Distance: " + totalDistanceMeters/1000f + " km");
-               Log.d("TRACKING", "Current: " + currentPace);
-               Log.d("TRACKING", "Avg: " + avgPace);
-
                drawRoutePolyline();
            }
        };
@@ -287,12 +277,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
         }
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() == null) {
-            Log.e("FIREBASE", "❌ ERROR: USER IS NOT LOGGED IN");
-        } else {
-            Log.d("FIREBASE", "✅ USER LOGGED IN: " + auth.getCurrentUser().getUid());
-        }
         //Preparing walk data
         float distanceKm = totalDistanceMeters / 1000f;
         String avgPace = getAveragePace();
@@ -303,6 +287,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         long timestamp = System.currentTimeMillis();
 
+        Log.e("STOP", "routePoints size at STOP = " + routePoints.size());
         ArrayList<HashMap<String, Double>> routeForFirebase = convertRouteToFirebase();
 
         WalkModel walk = new WalkModel(
@@ -383,10 +368,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ArrayList<HashMap<String, Double>> routeList = new ArrayList<>();
 
         for (LatLng p : routePoints) {
-            HashMap<String, Double> point = new HashMap<>();
-            point.put("lat", p.latitude);
-            point.put("lng", p.longitude);
-            routeList.add(point);
+            HashMap<String, Double> map = new HashMap<>();
+            map.put("lat", p.latitude);
+            map.put("lng", p.longitude);
+            routeList.add(map);
         }
 
         return routeList;

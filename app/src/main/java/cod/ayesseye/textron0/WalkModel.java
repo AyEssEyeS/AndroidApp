@@ -11,10 +11,8 @@ public class WalkModel implements Serializable {
     public long timestamp;
     public ArrayList<HashMap<String, Double>> route;
 
-    public WalkModel() {}
-
     public WalkModel(float distanceKm, String avgPace, String duration,
-                     long timestamp, ArrayList<HashMap<String, Double>> rote) {
+                     long timestamp, ArrayList<HashMap<String, Double>> route) {
         this.distanceKm = distanceKm;
         this.avgPace = avgPace;
         this.duration = duration;

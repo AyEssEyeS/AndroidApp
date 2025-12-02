@@ -2,13 +2,8 @@ package cod.ayesseye.textron0;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,8 +46,8 @@ public class WalkHistoryActivity extends AppCompatActivity {
             }
 
             WalksAdapter adapter = new WalksAdapter(walks, walk -> {
-                Intent i = new Intent(this, WalkDetailsActivity.class);
-                i.putExtra("walk" , String.valueOf(walk));
+                Intent i = new Intent(WalkHistoryActivity.this, WalkDetailsActivity.class);
+                i.putExtra("walk" , walk);
                 startActivity(i);
             });
 
