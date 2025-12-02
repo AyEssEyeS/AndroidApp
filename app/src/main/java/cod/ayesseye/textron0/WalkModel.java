@@ -1,9 +1,10 @@
 package cod.ayesseye.textron0;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class WalkModel {
+public class WalkModel implements Serializable {
     public float distanceKm;
     public String avgPace;
     public String duration;
