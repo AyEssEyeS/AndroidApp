@@ -5,4 +5,11 @@
     <color name="login_button_color">#332941</color>
     <color name="blue_dark">#000E75</color>
     <color name="blue">#001CFF</color>
+    <color name="teal_700">#00796B</color>
+    <color name="colorPrimaryDark">#004D40</color>
+    <color name="bottomBarBg">#F9F9F9</color>
+    <color name="md_theme_primary">#6750A4</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_secondary">#625B71</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
 </resources>

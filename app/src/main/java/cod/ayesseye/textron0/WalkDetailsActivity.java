@@ -129,7 +129,7 @@ public class WalkDetailsActivity extends AppCompatActivity implements OnMapReady
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(points.get(index[0])), 300, null);
 
                     index[0]++;
-                    handler.postDelayed(this, 100); // speed of replay
+                    handler.postDelayed(this, 250); // speed of replay
                 }
             }
         }, 100);

@@ -2,7 +2,6 @@ package cod.ayesseye.textron0;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.core.view.WindowCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
@@ -12,14 +11,16 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,9 +28,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -42,6 +43,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import cod.ayesseye.textron0.databinding.ActivityMapsBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -55,8 +58,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean isRunning = false;
     TextView timerText;
 
-    Button home, weather, startWalk, stopWalk, pauseResumeWalk;
+    Button home, weather;
+    FloatingActionButton startWalk, pauseWalk, stopWalk;
 
+
+    private long lastUpdateTime = 0;
 
     //Route tracking variables
     private ArrayList<LatLng> routePoints = new ArrayList<>();
@@ -65,6 +71,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //Location objects
     private FusedLocationProviderClient fusedLocationProviderClient;
     private com.google.android.gms.location.LocationCallback locationCallback;
+
+    LinearLayout bottomButtonContainer, statsContainer;
+    TextView txtKm, txtPace, txtCurrentPace;
+
+
 
     //Distance + Pace variables
     private float totalDistanceMeters = 0f;
@@ -80,6 +91,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -90,26 +103,54 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         home = findViewById(R.id.btn_home);
         weather = findViewById(R.id.btn_weather);
         startWalk = findViewById(R.id.btn_start);
+        pauseWalk = findViewById(R.id.btn_pause);
         stopWalk = findViewById(R.id.btn_stop);
         timerText = findViewById(R.id.timerText);
-        pauseResumeWalk = findViewById(R.id.btn_pause_resume);
+
+        bottomButtonContainer = findViewById(R.id.bottomButtonContainer);
+        statsContainer = findViewById(R.id.statsContainer);
+
+        txtKm = findViewById(R.id.txt_km);
+        txtPace = findViewById(R.id.txt_pace);
+        txtCurrentPace = findViewById(R.id.txt_currentPace);
+
+
+        pauseWalk.hide();
+        stopWalk.hide();
 
         home.setOnClickListener(v -> changePage(MainActivity.class));
         weather.setOnClickListener(v -> changePage(OpenWeather.class));
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        //Initialize gps Provider
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         startWalk.setOnClickListener(v -> {
             startTimer();
             startTrackingRoute();
+
+            startWalk.hide();
+            pauseWalk.show();
+            stopWalk.show();
+
+            bottomButtonContainer.setVisibility(View.GONE);
+            statsContainer.setVisibility(View.VISIBLE);
         });
+
+
+        pauseWalk.setOnClickListener(v -> togglePause());
+
         stopWalk.setOnClickListener(v -> {
             stopTimer();
             stopTrackingRoute();
+
+            pauseWalk.hide();
+            stopWalk.hide();
+            startWalk.show();
+
+            statsContainer.setVisibility(View.GONE);
+            bottomButtonContainer.setVisibility(View.VISIBLE);
+
+            pauseWalk.setImageResource(R.drawable.ic_pause);
         });
-        pauseResumeWalk.setOnClickListener(v -> pauseResumeTimer());
+
+
     }
 
     @Override
@@ -187,32 +228,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             int minutes = seconds / 60;
             int secs = seconds % 60;
 
-            String formatted = String.format("%2d:%2d", minutes, secs);
+            String formatted = String.format("%02d:%02d", minutes, secs);
 
-            //Update UI
             runOnUiThread(() -> timerText.setText(formatted));
         }, 1, 1, TimeUnit.SECONDS);
     }
 
-    private void pauseResumeTimer() {
-        if (!isRunning)
-            return;
-
+    private void togglePause() {
         isPaused = !isPaused;
 
         if (isPaused) {
-            pauseResumeWalk.setText("Resume");
+            pauseWalk.setImageResource(R.drawable.ic_play_arrow); // Switch to resume
         } else {
-            pauseResumeWalk.setText("Pause");
+            pauseWalk.setImageResource(R.drawable.ic_pause); // Switch to pause
         }
+
+
     }
+
 
     private void stopTimer() {
         if (scheduler != null) {
             scheduler.shutdownNow();
             scheduler = null;
         }
-        timerText.setText(" 0: 0");
+        timerText.setText("00:00");
     }
 
     @SuppressLint("MissingPermission")
@@ -236,16 +276,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Build what happens on each GPS update | Android calls this every 2 secs
        locationCallback = new com.google.android.gms.location.LocationCallback() {
            @Override
-           public void onLocationResult(com.google.android.gms.location.LocationResult result) {
-               Location location =  result.getLastLocation();
-               if (location == null) {
-                   return;
+           public void onLocationResult(LocationResult result) {
+               if (isPaused) return;  // Ignore updates when paused
+
+               Location location = result.getLastLocation();
+               if (location == null) return;
+               long now = System.currentTimeMillis();
+               float elapsedSec = 0;
+
+               if (lastUpdateTime != 0) {
+                   elapsedSec = (now - lastUpdateTime) / 1000f;
                }
+
+               lastUpdateTime = now;
+
 
                LatLng point = new LatLng(location.getLatitude(), location.getLongitude());
                float segmentMeters = 0f;
 
-               //Calculate segments distance
                if (!routePoints.isEmpty()) {
                    LatLng lastPoint = routePoints.get(routePoints.size() - 1);
 
@@ -260,10 +308,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                    totalDistanceMeters += segmentMeters;
                }
 
-               //Save new point
                routePoints.add(point);
-
                drawRoutePolyline();
+
+               // Update stats
+               float km = totalDistanceMeters / 1000f;
+               String currentPace = getCurrentPace(segmentMeters, elapsedSec);
+               String avgPace = getAveragePace();
+
+               runOnUiThread(() -> {
+                   txtKm.setText(String.format("KM: %.2f", km));
+                   txtCurrentPace.setText("Current Pace: " + currentPace);
+                   txtPace.setText("Avg Pace: " + avgPace);
+               });
            }
        };
 
@@ -331,21 +388,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         routePolyline = mMap.addPolyline(options);
     }
 
-    private String getCurrentPace(float segmentMeters) {
-        if (segmentMeters <= 0){
+    private String getCurrentPace(float segmentMeters, float seconds) {
+
+        // GPS noise handling
+        if (segmentMeters < 5 || seconds <= 0) {
             return "0:00";
         }
 
-        float segmentKm = segmentMeters / 1000f;
-        float seconds  = 2f; // Running every 2 seconds
 
-        float paceSecPerkm = seconds / segmentKm;
+        float km = segmentMeters / 1000f;
+        float paceSecPerKm = seconds / km;
 
-        int minutes = (int) (paceSecPerkm / 60);
-        int sec = (int) (paceSecPerkm % 60);
+        int minutes = (int) (paceSecPerKm / 60);
+        int sec = (int) (paceSecPerKm % 60);
 
-        return String.format(Locale.getDefault(), "%d:%02d min/km", minutes, sec);
+        return String.format(Locale.getDefault(), "%d:%02d", minutes, sec);
     }
+
 
     private String getAveragePace() {
         float totalKm = totalDistanceMeters / 1000f;
