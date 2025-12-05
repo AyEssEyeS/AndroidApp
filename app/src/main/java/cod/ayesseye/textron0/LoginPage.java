@@ -54,6 +54,13 @@
             FirebaseApp.initializeApp(this);
             mAuth = FirebaseAuth.getInstance();
 
+            //Check if user is alr logged in
+            if (mAuth.getCurrentUser() != null) {
+                changePage();
+                finish();
+                return;
+            }
+
             binding = ActivityLoginPageBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
 

@@ -37,9 +37,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="260dp"
         android:layout_gravity="bottom"
-        android:padding="16dp"
+        android:paddingBottom="16dp"
         android:fitsSystemWindows="true"
         android:background="#99000000"
         app:layout_constraintStart_toStartOf="parent"

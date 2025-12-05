@@ -32,6 +32,10 @@ public class WalkHistoryActivity extends AppCompatActivity {
 
     private void loadWalks() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            finish();
+            return;
+        }
 
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("users")
@@ -42,7 +46,9 @@ public class WalkHistoryActivity extends AppCompatActivity {
             walks.clear();
             for (DataSnapshot s : snapshot.getChildren()) {
                 WalkModel walk = s.getValue(WalkModel.class);
-                walks.add(walk);
+                if (walk != null) {
+                    walks.add(walk);
+                }
             }
 
             WalksAdapter adapter = new WalksAdapter(walks, walk -> {

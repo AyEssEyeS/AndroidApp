@@ -15,10 +15,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    Button goToOpenWeather, goToGoogleMaps,  gotoHistory, goToDetails;
+    Button goToOpenWeather, goToGoogleMaps,  gotoHistory, goToDetails, logOut;
 
 
 
@@ -38,11 +40,17 @@ public class MainActivity extends AppCompatActivity {
         goToGoogleMaps = findViewById(R.id.google_maps);
         gotoHistory = findViewById(R.id.go_to_history);
         goToDetails = findViewById(R.id.go_to_walk_details);
+        logOut = findViewById(R.id.btnLogout);
 
         goToOpenWeather.setOnClickListener(v -> changePage(OpenWeather.class));
         goToGoogleMaps.setOnClickListener(v -> changePage(MapsActivity.class));
         gotoHistory.setOnClickListener(v -> changePage(WalkHistoryActivity.class));
         goToDetails.setOnClickListener(v -> changePage(WalkDetailsActivity.class));
+        logOut.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            changePage(LoginPage.class);
+            finish();
+        });
 
 
     }
