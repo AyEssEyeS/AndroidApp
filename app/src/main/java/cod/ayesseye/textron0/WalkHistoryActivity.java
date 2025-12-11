@@ -31,11 +31,12 @@ public class WalkHistoryActivity extends AppCompatActivity {
     }
 
     private void loadWalks() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             finish();
             return;
         }
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("users")
@@ -44,20 +45,50 @@ public class WalkHistoryActivity extends AppCompatActivity {
 
         ref.get().addOnSuccessListener(snapshot -> {
             walks.clear();
+
             for (DataSnapshot s : snapshot.getChildren()) {
                 WalkModel walk = s.getValue(WalkModel.class);
                 if (walk != null) {
+                    walk.key = s.getKey(); // <-- REQUIRED
                     walks.add(walk);
                 }
             }
 
-            WalksAdapter adapter = new WalksAdapter(walks, walk -> {
-                Intent i = new Intent(WalkHistoryActivity.this, WalkDetailsActivity.class);
-                i.putExtra("walk" , walk);
-                startActivity(i);
-            });
+            WalksAdapter adapter = new WalksAdapter(
+
+                    walks,
+
+
+                    walk -> {
+                        Intent i = new Intent(WalkHistoryActivity.this, WalkDetailsActivity.class);
+                        i.putExtra("walk", walk);
+                        startActivity(i);
+                    },
+
+
+                    walk -> {
+                        deleteWalk(walk);
+                    }
+            );
 
             recyclerView.setAdapter(adapter);
+            recyclerView.setHasFixedSize(false);
+            adapter.notifyDataSetChanged();
+        });
+    }
+
+    private void deleteWalk(WalkModel walk) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(uid)
+                .child("walks")
+                .child(walk.key);
+
+        ref.removeValue().addOnSuccessListener(unused -> {
+            walks.remove(walk);
+            recyclerView.getAdapter().notifyDataSetChanged();
         });
     }
 }
