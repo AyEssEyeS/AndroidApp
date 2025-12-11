@@ -18,6 +18,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -45,6 +48,8 @@ import java.util.concurrent.TimeUnit;
 import cod.ayesseye.textron0.databinding.ActivityMapsBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONException;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -56,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int seconds = 0;
     private boolean isPaused = false;
     private boolean isRunning = false;
-    TextView timerText;
+    TextView timerText, txtCurrentTime, txtWeather;
 
     Button home, weather;
     FloatingActionButton startWalk, pauseWalk, stopWalk;
@@ -74,6 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     LinearLayout bottomButtonContainer, statsContainer;
     TextView txtKm, txtPace, txtCurrentPace;
+    private static final String API_KEY = "3496e86f154d566be3a095951868974f";
 
 
 
@@ -113,6 +119,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         txtKm = findViewById(R.id.txt_km);
         txtPace = findViewById(R.id.txt_pace);
         txtCurrentPace = findViewById(R.id.txt_currentPace);
+
+        txtCurrentTime = findViewById(R.id.txtCurrentTime);
+        txtWeather = findViewById(R.id.txtWeather);
+        startClock();
+        getWeather();
 
 
         pauseWalk.hide();
@@ -434,6 +445,70 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         return routeList;
+    }
+
+
+    private void startClock() {
+        final android.os.Handler handler = new android.os.Handler();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                String time = new java.text.SimpleDateFormat("HH:mm", Locale.getDefault()).format(new java.util.Date());
+
+                txtCurrentTime.setText("Time: " + time);
+                handler.postDelayed(this,1000);
+            }
+        });
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getWeather() {
+
+        FusedLocationProviderClient client =
+                LocationServices.getFusedLocationProviderClient(this);
+
+        client.getLastLocation().addOnSuccessListener(location -> {
+            if (location == null) {
+                txtWeather.setText("Weather: Location unavailable");
+                return;
+            }
+
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
+
+            String url = "https://api.openweathermap.org/data/2.5/weather?" +
+                    "lat=" + lat +
+                    "&lon=" + lng +
+                    "&units=metric" +
+                    "&appid=" + API_KEY;
+
+            JsonObjectRequest request = new JsonObjectRequest(
+                    Request.Method.GET,
+                    url,
+                    null,
+                    response -> {
+                        try {
+                            String city = response.getString("name");
+                            double temp = response.getJSONObject("main").getDouble("temp");
+                            String desc = response.getJSONArray("weather")
+                                    .getJSONObject(0)
+                                    .getString("description");
+
+                            txtWeather.setText(
+                                    "Weather: " + city + "\n" +
+                                            temp + "°C, " + desc
+                            );
+
+                        } catch (JSONException e) {
+                            txtWeather.setText("Weather: JSON error");
+                        }
+                    },
+                    error -> txtWeather.setText("Weather: fetch error")
+            );
+
+            AppController.getInstance().addToRequestQueue(request);
+        });
     }
 
 
