@@ -87,7 +87,7 @@ public class OpenWeather extends AppCompatActivity {
             return;
         }
 
-        progressBar.setVisibility(TextView.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         tvCity.setText(R.string.fetching_location);
 
         fusedLocationClient.getLastLocation()
