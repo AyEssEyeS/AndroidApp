@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- LOGOUT BUTTON (Top-left, spaced properly) -->
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
@@ -21,7 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- PAGE TITLE -->
     <TextView
         android:id="@+id/main_title"
         android:layout_width="wrap_content"
@@ -35,7 +33,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- WEATHER BUTTON -->
     <Button
         android:id="@+id/open_weather"
         android:layout_width="0dp"
@@ -51,7 +48,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- GOOGLE MAPS BUTTON -->
     <Button
         android:id="@+id/google_maps"
         android:layout_width="0dp"
@@ -67,7 +63,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- HISTORY BUTTON -->
     <Button
         android:id="@+id/go_to_history"
         android:layout_width="0dp"
