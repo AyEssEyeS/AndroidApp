@@ -1,10 +1,12 @@
 package cod.ayesseye.textron0;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ public class OpenWeather extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient; // Obiect GPlayServ care preia locatia curent
 
     private static final String API_KEY = "3496e86f154d566be3a095951868974f";
+    Button homeBtn, mapsBtn;
 
     TextView tvCity, tvTemperature, tvDescription, tvHumidity;
     ProgressBar progressBar;
@@ -54,9 +57,14 @@ public class OpenWeather extends AppCompatActivity {
         tvDescription = findViewById(R.id.tvDescription);
         tvHumidity = findViewById(R.id.tvHumidity);
         progressBar = findViewById(R.id.progressBar);
+        homeBtn = findViewById(R.id.btn_home);
+        mapsBtn = findViewById(R.id.btn_maps);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         requestLocationPermission();
+
+        homeBtn.setOnClickListener(v -> changePage(MainActivity.class));
+        mapsBtn.setOnClickListener(v -> changePage(MapsActivity.class));
     }
 
     private void requestLocationPermission() {
@@ -158,5 +166,10 @@ public class OpenWeather extends AppCompatActivity {
                 }
         );
         AppController.getInstance().addToRequestQueue(request);
+    }
+
+    private void changePage(Class<?> targetActivity) {
+        Intent intent = new Intent(this, targetActivity);
+        startActivity(intent);
     }
 }

@@ -115,7 +115,6 @@
     </LinearLayout>
 
 
-    <!-- BOTTOM PANEL -->
     <LinearLayout
         android:id="@+id/bottomNavCard"
         android:layout_width="match_parent"
@@ -129,7 +128,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- NORMAL MODE -->
         <LinearLayout
             android:id="@+id/bottomButtonContainer"
             android:layout_width="match_parent"
@@ -158,7 +156,6 @@
                 android:layout_marginStart="10dp"/>
         </LinearLayout>
 
-        <!-- STATS MODE -->
         <LinearLayout
             android:id="@+id/statsContainer"
             android:layout_width="match_parent"
