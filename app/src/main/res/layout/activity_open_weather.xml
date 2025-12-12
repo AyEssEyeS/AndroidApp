@@ -41,8 +41,8 @@
             android:id="@+id/weatherIcon"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_weather_placeholder"
-            android:tint="#2C2C2C"
+            android:src="@drawable/baseline_wb_sunny_24"
+            app:tint="#2C2C2C"
             android:layout_marginBottom="16dp"/>
 
         <!-- CITY -->

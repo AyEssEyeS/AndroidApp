@@ -1,47 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@android:color/white"
-    android:elevation="4dp"
-    android:layout_margin="12dp"
-    android:clipToOutline="true">
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginVertical="10dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true"
+    app:cardCornerRadius="18dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#DDDDDD">
 
-    <TextView
-        android:id="@+id/walkDate"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:padding="18dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#000000" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/walkDistance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#000000" />
 
-    <TextView
-        android:id="@+id/walkDuration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#000000" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/walkAvgPace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#444444"
-        android:textSize="16sp" />
+            <TextView
+                android:id="@+id/walkDistance"
+                android:text="5.20 km"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#222222"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
-    <Button
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delete"
-        android:layout_marginTop="12dp"/>
-</LinearLayout>
+            <TextView
+                android:id="@+id/walkDuration"
+                android:text="32:10"
+                android:textSize="18sp"
+                android:textColor="#444444"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"/>
+        </LinearLayout>
+
+
+        <!-- Avg Pace -->
+        <TextView
+            android:id="@+id/walkAvgPace"
+            android:text="Avg Pace: 5:15 min/km"
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:layout_marginTop="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Date -->
+        <TextView
+            android:id="@+id/walkDate"
+            android:text="March 10, 2025"
+            android:textSize="15sp"
+            android:textColor="#777777"
+            android:layout_marginTop="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Buttons Row -->
+        <LinearLayout
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/deleteButton"
+                android:text="Delete"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:background="@drawable/round_black_btn"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

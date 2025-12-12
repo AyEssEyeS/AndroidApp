@@ -3,17 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- MAP -->
     <fragment
         android:id="@+id/detailsMap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- FLOATING REPLAY BUTTON -->
     <Button
         android:id="@+id/btnReplay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:text="Replay Run" />
-
+        android:layout_width="160dp"
+        android:layout_height="52dp"
+        android:text="Replay Run"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/round_black_btn"
+        android:elevation="8dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="32dp"
+        android:padding="12dp"/>
 </FrameLayout>
