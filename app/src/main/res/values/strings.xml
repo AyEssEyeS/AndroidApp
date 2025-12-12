@@ -32,4 +32,10 @@
     <string name="weather">Weather</string>
     <string name="start_walking">Start</string>
     <string name="stop_walking">Stop</string>
+    <string name="nume_app">ModuriApp</string>
+    <string-array name="mode_options">
+        <item>Normal</item>
+        <item>Leader</item>
+        <item>Follower</item>
+    </string-array>
 </resources>

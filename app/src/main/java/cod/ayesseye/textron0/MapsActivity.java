@@ -10,13 +10,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.PopupMenu;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -38,6 +41,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -51,7 +56,32 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONException;
 
 
+
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    //Current Working mode
+    private enum AppMode {
+        NORMAL,
+        LEADER,
+        FOLLOWER
+    }
+    //Default Mode  when the app starts
+    private AppMode currentMode = AppMode.NORMAL;
+
+    //Udp port shared
+    private static final int UDP_PORT = 5000;
+    //Leader
+    private DatagramSocket leaderSocket;
+    private InetAddress broadcastAdress;
+    //Follower
+    private DatagramSocket followerSocket;
+    private Thread followerThread;
+    //Wi-fi Lock
+    private WifiManager.MulticastLock multicastLock;
+    //Map marker for the leader
+    private com.google.android.gms.maps.model.Marker leaderMarker;
+
 
     //Map object
     private GoogleMap mMap;
@@ -76,6 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //Location objects
     private FusedLocationProviderClient fusedLocationProviderClient;
     private com.google.android.gms.location.LocationCallback locationCallback;
+    FloatingActionButton modeSelectButton;
 
     LinearLayout bottomButtonContainer, statsContainer;
     TextView txtKm, txtPace, txtCurrentPace;
@@ -120,6 +151,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         txtPace = findViewById(R.id.txt_pace);
         txtCurrentPace = findViewById(R.id.txt_currentPace);
 
+        modeSelectButton = findViewById(R.id.btn_mode_select);
+
         txtCurrentTime = findViewById(R.id.txtCurrentTime);
         txtWeather = findViewById(R.id.txtWeather);
         startClock();
@@ -128,6 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         pauseWalk.hide();
         stopWalk.hide();
+
 
         home.setOnClickListener(v -> changePage(MainActivity.class));
         weather.setOnClickListener(v -> changePage(OpenWeather.class));
@@ -147,6 +181,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         pauseWalk.setOnClickListener(v -> togglePause());
 
+        modeSelectButton.setOnClickListener(v -> showModePopupMenu(v));
         stopWalk.setOnClickListener(v -> {
             stopTimer();
             stopTrackingRoute();
@@ -511,5 +546,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    private void showModePopupMenu(View view) {
+        PopupMenu popup = new PopupMenu(this, view);
+        popup.getMenuInflater().inflate(R.menu.mode_menu, popup.getMenu());
 
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                int itemId = item.getItemId();
+                AppMode newMode;
+
+                if (itemId == R.id.mode_normal) {
+                    newMode = AppMode.NORMAL;
+                } else if (itemId == R.id.mode_leader) {
+                    newMode = AppMode.LEADER;
+                } else if (itemId == R.id.mode_follower) {
+                    newMode = AppMode.FOLLOWER;
+                } else {
+                    return false;
+                }
+
+                // Aplică noul mod și logica specifică
+                setAppMode(newMode);
+                return true;
+            }
+        });
+        popup.show();
+    }
+
+    private void setAppMode(AppMode newMode) {
+        currentMode = newMode;
+        Log.d("AppMode", "Modul a fost schimbat la: " + newMode.toString());
+
+        // Logica vizuală (opțional)
+        int color;
+        String modeName;
+
+        switch (newMode) {
+            case NORMAL:
+                color = Color.BLACK; // Mod implicit
+                modeName = "Normal";
+                // Oprirea oricărei funcționalități Leader/Follower
+                break;
+            case LEADER:
+                color = Color.RED; // Evidențiere roșie pentru Leader
+                modeName = "Leader";
+                // Implementează logica de broadcasting (trimitere coordonate)
+                break;
+            case FOLLOWER:
+                color = Color.GREEN; // Evidențiere verde pentru Follower
+                modeName = "Follower";
+                // Implementează logica de ascultare/primire coordonate
+                break;
+            default:
+                color = Color.BLACK;
+                modeName = "Necunoscut";
+        }
+
+    }
 }
