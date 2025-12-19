@@ -81,7 +81,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private TextView timerText, txtCurrentTime, txtWeather;
     private TextView txtKm, txtPace, txtCurrentPace;
-    private TextView txtSession; // To show Session ID in Leader Mode
     private Button homeBtn, weatherBtn;
     private FloatingActionButton startBtn, pauseBtn, stopBtn, modeBtn;
     private LinearLayout bottomButtonContainer, statsContainer;
@@ -159,7 +158,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         modeBtn = findViewById(R.id.btn_mode_select);
 
         timerText = findViewById(R.id.timerText);
-        txtSession = findViewById(R.id.txtSessionId); // Make sure this exists in XML or add it
 
         txtCurrentTime = findViewById(R.id.txtCurrentTime);
         txtWeather = findViewById(R.id.txtWeather);
@@ -174,7 +172,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Initial Visibility
         pauseBtn.hide();
         stopBtn.hide();
-        if(txtSession != null) txtSession.setVisibility(View.GONE);
     }
 
     /**
@@ -343,9 +340,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             totalDistanceMeters += segmentMeters;
         }
 
-        // Add to path and draw
         routePoints.add(point);
         drawNormalPolyline();
+        // Add to path and draw
 
         // Update Text Stats
         float km = totalDistanceMeters / 1000f;
@@ -460,7 +457,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     /**
      * FOLLOWER: Checks distance to every point in the Red Line.
-     * If close (< 15m), removes the point (Eat it).
+     * If close (< 15m), removes the point.
      */
     private void checkIfConsumingLine(Location myLoc) {
         if (leaderPoints.isEmpty()) return;
@@ -499,7 +496,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             startBtn.show();
             stopBtn.hide();
             pauseBtn.hide();
-            if(txtSession != null) txtSession.setVisibility(View.GONE);
             bottomButtonContainer.setVisibility(View.VISIBLE);
             statsContainer.setVisibility(View.GONE);
 
@@ -517,10 +513,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void setupLeader() {
         currentMode = AppMode.LEADER;
         sessionId = UUID.randomUUID().toString().substring(0, 6).toUpperCase(Locale.ROOT);
-        if(txtSession != null) {
-            txtSession.setText("Session: " + sessionId);
-            txtSession.setVisibility(View.VISIBLE);
-        }
         askForFollowerIp();
     }
 
