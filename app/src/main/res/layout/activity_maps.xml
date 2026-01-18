@@ -17,6 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_lock_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="Lock Camera"
+        android:src="@android:drawable/ic_menu_camera"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/controlButtons"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <LinearLayout
         android:id="@+id/timerCard"
         android:layout_width="wrap_content"
@@ -54,6 +66,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+
+
         <TextView
             android:id="@+id/txtCurrentTime"
             android:layout_width="wrap_content"
@@ -83,6 +97,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_stop"
             android:layout_width="wrap_content"
@@ -91,6 +106,7 @@
             android:src="@drawable/ic_stop"
             app:backgroundTint="#000000"
             app:tint="@android:color/white" />
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_start"
@@ -133,6 +149,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+
 
         <LinearLayout
             android:id="@+id/bottomButtonContainer"
