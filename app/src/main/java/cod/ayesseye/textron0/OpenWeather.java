@@ -30,17 +30,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+// Activitatea responsabila cu afisarea datelor meteo in timp real bazate pe locatia utilizatorului
 public class OpenWeather extends AppCompatActivity {
 
-    // Constants for permissions and API configuration
+    // Constante pentru codul cererii de locatie si cheia API OpenWeatherMap
     private static final int LOCATION_REQUEST_CODE = 1001;
-    // Note: In a production app, store this key in a secure place (like local.properties)
     private static final String API_KEY = "3496e86f154d566be3a095951868974f";
 
-    // Location client to retrieve GPS coordinates
+    // Client pentru accesarea serviciilor de locatie Google (GPS)
     private FusedLocationProviderClient fusedLocationClient;
 
-    // UI Elements
+    // Elemente de interfata (UI)
     private Button homeBtn, mapsBtn;
     private TextView tvCity, tvTemperature, tvDescription, tvHumidity;
     private ProgressBar progressBar;
@@ -49,33 +49,29 @@ public class OpenWeather extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Enable Edge-to-Edge display for modern Android look
+        // Activare afisare Edge-to-Edge si setare layout
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_open_weather);
 
-        // Handle window insets to prevent UI overlap with system bars
+        // Gestionare padding pentru barele de sistem
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Initialize UI components
+        // Initializare componente UI si client Locatie
         initializeViews();
-
-        // Initialize Location Services
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // Check for permissions and fetch location/weather
+        // Verificare permisiuni si pornire flux de obtinere date meteo
         checkAndRequestPermissions();
 
-        // Setup navigation buttons
+        // Configurare navigare butoane inferioare
         setupNavigation();
     }
 
-    /**
-     * Binds XML IDs to Java objects.
-     */
+    // Leaga variabilele Java de elementele din fisierul XML
     private void initializeViews() {
         tvCity = findViewById(R.id.tvCity);
         tvTemperature = findViewById(R.id.tvTemperature);
@@ -86,13 +82,11 @@ public class OpenWeather extends AppCompatActivity {
         mapsBtn = findViewById(R.id.btn_maps);
     }
 
-    /**
-     * Sets up click listeners for the bottom navigation bar.
-     */
+    // Configureaza listenerii pentru butoanele de navigare (Acasa, Harta)
     private void setupNavigation() {
         homeBtn.setOnClickListener(v -> {
             changePage(MainActivity.class);
-            finish(); // Closes this activity so back button behaves correctly
+            finish(); // Inchide activitatea curenta pentru a elibera memoria
         });
 
         mapsBtn.setOnClickListener(v -> {
@@ -101,27 +95,22 @@ public class OpenWeather extends AppCompatActivity {
         });
     }
 
-    /**
-     * Checks if the user has granted Fine Location permission.
-     * If yes, gets location. If no, requests permission.
-     */
+    // Verifica daca permisiunea de Locatie este acordata; daca nu, o solicita utilizatorului
     private void checkAndRequestPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Request permission dialog
+            // Afiseaza dialogul de sistem pentru permisiune
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_REQUEST_CODE);
         } else {
-            // Permission already granted
+            // Permisiunea exista deja, obtinem locatia
             getCurrentLocation();
         }
     }
 
-    /**
-     * Callback received when user accepts or denies permission.
-     */
+    // Callback apelat dupa ce utilizatorul raspunde la dialogul de permisiuni
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -137,11 +126,9 @@ public class OpenWeather extends AppCompatActivity {
         }
     }
 
-    /**
-     * Retrieves the last known location of the device.
-     */
+    // Obtine coordonatele GPS (Latitudine, Longitudine) folosind FusedLocationClient
     private void getCurrentLocation() {
-        // Security check required by Android Studio
+        // Verificare de securitate obligatorie pentru Android
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -153,14 +140,14 @@ public class OpenWeather extends AppCompatActivity {
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
                     if (location != null) {
-                        // Location found, fetch weather data
+                        // Locatie gasita, apelam API-ul Meteo
                         double lat = location.getLatitude();
                         double lon = location.getLongitude();
                         Log.d("OpenWeather", "Coordinates: " + lat + ", " + lon);
 
                         fetchWeatherDataFromApi(lat, lon);
                     } else {
-                        // Location is null (common in emulators or if GPS was off)
+                        // Locatie nula (posibil GPS oprit)
                         progressBar.setVisibility(View.GONE);
                         Toast.makeText(this, "Could not determine location. Try opening Google Maps first.", Toast.LENGTH_LONG).show();
                     }
@@ -171,19 +158,15 @@ public class OpenWeather extends AppCompatActivity {
                 });
     }
 
-    /**
-     * Makes a network request to OpenWeatherMap API using Volley.
-     * @param latitude Device latitude
-     * @param longitude Device longitude
-     */
+    // Executa cererea HTTP catre API-ul OpenWeatherMap folosind biblioteca Volley
     private void fetchWeatherDataFromApi(double latitude, double longitude) {
         String url = "https://api.openweathermap.org/data/2.5/weather?"
                 + "lat=" + latitude
                 + "&lon=" + longitude
-                + "&units=metric" // Ensures Celsius
+                + "&units=metric" // Asigura date in grade Celsius
                 + "&appid=" + API_KEY;
 
-        // Create a new request queue
+        // Creare coada de cereri
         RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -191,53 +174,47 @@ public class OpenWeather extends AppCompatActivity {
                 url,
                 null,
                 response -> {
-                    // Success Callback
+                    // Succes: Ascunde bara de progres si proceseaza JSON-ul
                     progressBar.setVisibility(View.GONE);
                     parseAndDisplayWeather(response);
                 },
                 error -> {
-                    // Error Callback
+                    // Eroare retea: Afiseaza mesaj corespunzator
                     progressBar.setVisibility(View.GONE);
                     Log.e("OpenWeather", "Network Error: " + error.toString());
                     Toast.makeText(this, "Failed to load weather data.", Toast.LENGTH_SHORT).show();
 
-                    // Set fallback text
                     tvCity.setText(R.string.city_error);
                     tvTemperature.setText(R.string.temperature_na);
                 }
         );
 
-        // Add the request to the queue to execute it
+        // Adaugare cerere in coada de executie
         queue.add(jsonObjectRequest);
     }
 
-    /**
-     * Parses the JSON response and updates the UI.
-     * @param response The JSON object returned by the API.
-     */
+    // Parseaza raspunsul JSON de la server si actualizeaza elementele vizuale
     private void parseAndDisplayWeather(JSONObject response) {
         try {
-            // 1. Extract City Name
+            // 1. Extragere Nume Oras
             String cityName = response.getString("name");
 
-            // 2. Extract Main Data (Temp, Humidity)
+            // 2. Extragere Date Principale (Temperatura, Umiditate)
             JSONObject mainObj = response.getJSONObject("main");
             double temp = mainObj.getDouble("temp");
             int humidity = mainObj.getInt("humidity");
 
-            // 3. Extract Weather Description (it is inside an array)
+            // 3. Extragere Descriere Meteo (din array-ul 'weather')
             JSONArray weatherArray = response.getJSONArray("weather");
             JSONObject weatherObj = weatherArray.getJSONObject(0);
             String description = weatherObj.getString("description");
 
-            // 4. Update UI Elements
-            // Using String.format or concatenation based on your string resources
+            // 4. Actualizare UI
             tvCity.setText(cityName);
 
-            // Assuming your strings.xml has placeholders like "Temp: %1$s"
-            // If strictly using the IDs you provided:
+            // Formatare temperatura si text
             tvTemperature.setText(String.format(java.util.Locale.getDefault(), "%.1f°C", temp));
-            tvDescription.setText(description.substring(0, 1).toUpperCase() + description.substring(1)); // Capitalize first letter
+            tvDescription.setText(description.substring(0, 1).toUpperCase() + description.substring(1)); // Capitalizare prima litera
             tvHumidity.setText("Humidity: " + humidity + "%");
 
         } catch (JSONException e) {
@@ -246,9 +223,7 @@ public class OpenWeather extends AppCompatActivity {
         }
     }
 
-    /**
-     * Helper method to switch activities.
-     */
+    // Metoda helper pentru schimbarea activitatii
     private void changePage(Class<?> targetActivity) {
         Intent intent = new Intent(this, targetActivity);
         startActivity(intent);

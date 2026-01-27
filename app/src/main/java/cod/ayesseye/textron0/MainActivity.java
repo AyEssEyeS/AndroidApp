@@ -18,9 +18,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 
 
+// Ecranul principal (Dashboard) care serveste drept meniu de navigare
 public class MainActivity extends AppCompatActivity {
 
-    Button goToOpenWeather, goToGoogleMaps,  gotoHistory, goToDetails, logOut;
+    Button goToOpenWeather, goToGoogleMaps,  gotoHistory, logOut;
 
 
 
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+        // Configureaza afisarea corecta a interfetei pe tot ecranul (Edge-to-Edge)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -36,14 +39,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        // Initializarea elementelor de UI (butoane)
         goToOpenWeather = findViewById(R.id.open_weather);
         goToGoogleMaps = findViewById(R.id.google_maps);
         gotoHistory = findViewById(R.id.go_to_history);
         logOut = findViewById(R.id.btnLogout);
 
+        // Configurarea listenerilor pentru navigarea catre modulele principale
         goToOpenWeather.setOnClickListener(v -> changePage(OpenWeather.class));
         goToGoogleMaps.setOnClickListener(v -> changePage(MapsActivity.class));
         gotoHistory.setOnClickListener(v -> changePage(WalkHistoryActivity.class));
+
+        // Logica de delogare: Deconecteaza Firebase si revine la Login
         logOut.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             changePage(LoginPage.class);
@@ -52,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-        private void changePage(Class<?> targetActivity) {
+    // Metoda helper pentru tranzitia simplificata intre Activitati
+    private void changePage(Class<?> targetActivity) {
         Intent intent = new Intent(this, targetActivity);
         startActivity(intent);
     }

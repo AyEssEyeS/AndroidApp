@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class WalkDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
-
     private GoogleMap mMap;
     private WalkModel walk;
     private PolylineOptions replayOptions;

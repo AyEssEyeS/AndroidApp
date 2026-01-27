@@ -13,12 +13,14 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+// Adaptor pentru RecyclerView care gestioneaza afisarea listei de curse in interfata
 public class WalksAdapter extends RecyclerView.Adapter<WalksAdapter.WalkViewHolder> {
 
     private ArrayList<WalkModel> walks;
     private OnWalkClickListener onWalkClickListener;
     private OnDeleteClickListener onDeleteClickListener;
 
+    // Interfete pentru a transmite actiunile de click catre Activitatea parinte
     public interface OnWalkClickListener {
         void onWalkClick(WalkModel walk);
     }
@@ -27,6 +29,7 @@ public class WalksAdapter extends RecyclerView.Adapter<WalksAdapter.WalkViewHold
         void onDeleteClick(WalkModel walk);
     }
 
+    // Constructorul care initializeaza lista de date si listenerii pentru evenimente
     public WalksAdapter(ArrayList<WalkModel> walks,
                         OnWalkClickListener onWalkClickListener,
                         OnDeleteClickListener onDeleteClickListener) {
@@ -36,6 +39,7 @@ public class WalksAdapter extends RecyclerView.Adapter<WalksAdapter.WalkViewHold
         this.onDeleteClickListener = onDeleteClickListener;
     }
 
+    // Creaza instanta vizuala a unui element din lista (inflating layout)
     @NonNull
     @Override
     public WalkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -44,6 +48,7 @@ public class WalksAdapter extends RecyclerView.Adapter<WalksAdapter.WalkViewHold
         return new WalkViewHolder(view);
     }
 
+    // Leaga datele din modelul WalkModel de elementele vizuale ale randului curent
     @Override
     public void onBindViewHolder(@NonNull WalkViewHolder holder, int position) {
         WalkModel walk = walks.get(position);
@@ -52,15 +57,16 @@ public class WalksAdapter extends RecyclerView.Adapter<WalksAdapter.WalkViewHold
         holder.duration.setText(walk.duration);
         holder.avgPace.setText(walk.avgPace);
 
+        // Formateaza data calendaristica dintr-un timestamp
         String date = DateFormat.getDateInstance().format(new Date(walk.timestamp));
         holder.date.setText(date);
 
-        // OPEN DETAILS
+        // Gestioneaza click-ul pe intregul element pentru a deschide detaliile
         holder.itemView.setOnClickListener(v ->
                 onWalkClickListener.onWalkClick(walk)
         );
 
-        // DELETE BUTTON ACTION
+        // Gestioneaza click-ul pe butonul de stergere
         holder.deleteBtn.setOnClickListener(v ->
                 onDeleteClickListener.onDeleteClick(walk)
         );
@@ -71,6 +77,7 @@ public class WalksAdapter extends RecyclerView.Adapter<WalksAdapter.WalkViewHold
         return walks.size();
     }
 
+    // Clasa ViewHolder pentru optimizarea performantei prin retinerea referintelor la View-uri
     public static class WalkViewHolder extends RecyclerView.ViewHolder {
 
         TextView distance, duration, avgPace, date;

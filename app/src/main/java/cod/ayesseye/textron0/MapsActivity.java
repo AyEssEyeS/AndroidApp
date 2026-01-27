@@ -69,15 +69,16 @@ import java.util.concurrent.TimeUnit;
 
 import cod.ayesseye.textron0.databinding.ActivityMapsBinding;
 
+// Activitatea principala care gestioneaza Harta, GPS-ul si logica Multiplayer (UDP)
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    // --- ENUMS & CONSTANTS ---
+    // Definirea starilor aplicatiei: Normal , Leader sau Follower
     private enum AppMode { NORMAL, LEADER, FOLLOWER }
     private AppMode currentMode = AppMode.NORMAL;
 
     private static final int UDP_PORT = 50505;
-    private static final String API_KEY = "3496e86f154d566be3a095951868974f";
-    private static final float EAT_DISTANCE_METERS = 15.0f;
+    private static final String API_KEY = "3496e86f154d566be3a095951868974f"; // Cheie API Weather
+    private static final float EAT_DISTANCE_METERS = 15.0f; // Distanta de interactiune in Maps
 
     // --- UI ELEMENTS ---
     private GoogleMap mMap;
@@ -86,10 +87,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button homeBtn, weatherBtn;
     private FloatingActionButton startBtn, pauseBtn, stopBtn, modeBtn;
     private LinearLayout bottomButtonContainer, statsContainer;
-    private FloatingActionButton lockBtn; // Butonul nou
-    private boolean isCameraLocked = false; // Flag pentru stare
+    private FloatingActionButton lockBtn;
+    private boolean isCameraLocked = false;
 
     // --- TIMERS ---
+    // Executor pentru cronometrul antrenamentului
     private ScheduledExecutorService scheduler;
     private int seconds = 0;
     private boolean isPaused = false;
@@ -101,20 +103,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean isFirstZoom = true;
     private boolean weatherFetched = false;
 
-    // Normal Mode Path
+    // Normal Mode Path - Stocarea traseului local
     private ArrayList<LatLng> routePoints = new ArrayList<>();
     private Polyline routePolyline;
     private float totalDistanceMeters = 0f;
     private long startTimeMillis;
     private long lastUpdateTime = 0;
 
-    // Game Elements
+    // Game Elements - Elementele pentru modul Multiplayer
     private ArrayList<LatLng> leaderPoints = new ArrayList<>();
     private Polyline leaderPolyline;
     private Marker leaderMarker;
     private Marker followerMarker;
 
     // --- NETWORKING (UDP) ---
+    // Socket si Thread-uri pentru comunicarea Peer-to-Peer
     private DatagramSocket udpSocket;
     private Thread receiverThread;
     private String targetIp; // IP-ul PARTENERULUI
@@ -126,15 +129,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // IMPORTANT: Permitem rețea pe main thread pentru inițializare rapidă (Strict Mode Policy)
+        //Permitem retea pe main thread pentru initializare rapida (Strict Mode Policy)
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Initializare client locatie (Google Services)
         locationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        // Incarcare asincrona a hartii
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) mapFragment.getMapAsync(this);
@@ -142,9 +147,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         initializeViews();
         setupClickListeners();
         startRealTimeClock();
-        startTrackingService();
+        startTrackingService(); // Porneste urmarirea GPS
     }
 
+    // Leaga variabilele din cod de elementele vizuale din XML
     private void initializeViews() {
         homeBtn = findViewById(R.id.btn_home);
         weatherBtn = findViewById(R.id.btn_weather);
@@ -167,6 +173,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stopBtn.hide();
     }
 
+    // Defineste actiunile butoanelor (Start, Stop, Lock Camera, Schimbare Mod)
     private void setupClickListeners() {
         homeBtn.setOnClickListener(v -> {
             stopTrackingService();
@@ -211,16 +218,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         modeBtn.setOnClickListener(this::showModePopupMenu);
 
+        // Logica pentru blocarea camerei pe partener (Follower Mode)
         lockBtn.setOnClickListener(v -> {
-            isCameraLocked = !isCameraLocked; // Inversăm starea
+            isCameraLocked = !isCameraLocked; // Inversam starea
 
             if (isCameraLocked) {
                 // Stare: BLOCAT (LIPIT)
-                Toast.makeText(this, "Camera lipită de Leader!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera lipita de Leader!", Toast.LENGTH_SHORT).show();
                 lockBtn.setImageTintList(android.content.res.ColorStateList.valueOf(Color.RED)); // Facem iconita rosie
             } else {
                 // Stare: LIBER
-                Toast.makeText(this, "Camera liberă", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera libera", Toast.LENGTH_SHORT).show();
                 lockBtn.setImageTintList(android.content.res.ColorStateList.valueOf(Color.BLACK)); // Revenim la normal
             }
         });
@@ -228,6 +236,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // --- MAP & GPS LOGIC ---
 
+    // Callback apelat cand harta este gata de utilizare
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
@@ -238,6 +247,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // Configureaza si porneste ascultatorul de locatie GPS (High Accuracy)
     @SuppressLint("MissingPermission")
     private void startTrackingService() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -265,6 +275,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 LatLng point = new LatLng(location.getLatitude(), location.getLongitude());
 
+                // Logica principala in functie de modul activ
                 switch (currentMode) {
                     case NORMAL:
                         if (stopBtn.isShown()) processNormalWalk(location, point);
@@ -286,8 +297,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper());
     }
 
+    // Calculeaza distanta, viteza si deseneaza traseul pentru modul Normal
     private void processNormalWalk(Location location, LatLng point) {
-        // ... (Codul pentru Normal Mode rămâne neschimbat)
+        // ... (Codul pentru Normal Mode ramane neschimbat)
         long now = System.currentTimeMillis();
         float elapsedSec = 0;
         if (lastUpdateTime != 0) elapsedSec = (now - lastUpdateTime) / 1000f;
@@ -314,12 +326,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    // Deseneaza linia albastra pe harta
     private void drawNormalPolyline() {
         if (mMap == null || routePoints.size() < 2) return;
         if (routePolyline != null) routePolyline.remove();
         routePolyline = mMap.addPolyline(new PolylineOptions().addAll(routePoints).width(12).color(Color.BLUE).geodesic(true));
     }
 
+    // Deseneaza linia rosie a Leader-ului
     private void drawLeaderPolyline() {
         if (mMap == null) return;
         if (leaderPolyline != null) leaderPolyline.remove();
@@ -328,7 +342,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // --- UDP NETWORKING LOGIC (REPARAT) ---
 
-    // Funcție nouă pentru a inițializa socket-ul garantat
+    // Functie noua pentru a initializa socket-ul garantat
     private void initSocket() {
         try {
             if (udpSocket == null || udpSocket.isClosed()) {
@@ -342,10 +356,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // Trimite locatia curenta catre partener prin protocolul UDP
     private void sendUdpPacket(LatLng pos, String type) {
         if (targetIp == null || targetIp.isEmpty() || !isRunningNetwork) return;
 
-        // VERIFICARE critică: Dacă socket-ul e null, încercăm să-l creăm pe loc
+        // VERIFICARE critica: Daca socket-ul e null, incercam sa-l cream pe loc
         if (udpSocket == null) {
             initSocket();
         }
@@ -365,7 +380,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 udpSocket.send(dp);
 
                 // --- LOG PENTRU DEPANARE ---
-                // Verifică acest tag în Logcat pe telefonul FOLLOWER
+                // Verifica acest tag in Logcat pe telefonul FOLLOWER
                 Log.d("UDP_SEND", "Trimis " + type + " catre " + targetIp + " | Lat: " + pos.latitude);
 
             } catch (Exception e) {
@@ -374,10 +389,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }).start();
     }
 
+    // Thread care asculta permanent pachetele UDP de la partener
     private void startReceiver() {
         isRunningNetwork = true;
 
-        // Ne asigurăm că socket-ul există înainte de a porni thread-ul
+        // Ne asiguram ca socket-ul exista inainte de a porni thread-ul
         initSocket();
 
         receiverThread = new Thread(() -> {
@@ -407,6 +423,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         receiverThread.start();
     }
 
+    // Proceseaza pachetele primite si actualizeaza pozitiile pe harta
     private void processIncomingPacket(SyncLocationPacket packet) {
         LatLng pos = new LatLng(packet.lat, packet.lng);
 
@@ -433,7 +450,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 leaderMarker.setPosition(pos);
             }
             if (isCameraLocked) {
-                // Mutăm camera pe poziția Leader-ului, păstrând zoom-ul curent
+                // Mutam camera pe pozitia Leader-ului, pastrand zoom-ul curent
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(pos));
             }
             leaderPoints.add(pos);
@@ -441,6 +458,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // Logica jocului: Daca Follower este aproape de Leader, sterge traseul
     private void checkIfConsumingLine(Location myLoc) {
         if (leaderPoints.isEmpty()) return;
         boolean changed = false;
@@ -459,6 +477,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // --- MODE SWITCHING ---
 
+    // Afiseaza meniul de selectie a modurilor
     private void showModePopupMenu(View view) {
         PopupMenu popup = new PopupMenu(this, view);
         popup.getMenu().add("NORMAL");
@@ -486,28 +505,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         popup.show();
     }
 
-    // Modifică setupLeader
+    // Modifica setupLeader: Configureaza rolul de gazda
     private void setupLeader() {
         currentMode = AppMode.LEADER;
         sessionId = UUID.randomUUID().toString().substring(0, 6).toUpperCase(Locale.ROOT);
         initSocket();
 
-        // Îți arătăm propriul IP ca să știi ce să-i zici Follower-ului
+        // Iti aratam propriul IP ca sa stii ce sa-i zici Follower-ului
         String myIp = getMyIpAddress();
         askForIp("EU SUNT LEADER.\nIP-ul meu este: " + myIp + "\n\nIntrodu IP-ul Follower-ului:");
     }
 
+    // Configureaza rolul de client
     private void setupFollower() {
         currentMode = AppMode.FOLLOWER;
         initSocket();
 
-        // ARĂTĂM BUTONUL DE LOCK
+        // ARATAM BUTONUL DE LOCK
         lockBtn.show();
 
         String myIp = getMyIpAddress();
         askForIp("EU SUNT FOLLOWER.\nIP-ul meu: " + myIp + "\nIntrodu IP Leader:");
     }
 
+    // Dialog pentru introducerea IP-ului celuilalt telefon
     private void askForIp(String title) {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(title);
@@ -516,7 +537,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         b.setView(input);
         b.setPositiveButton("OK", (d, w) -> {
             targetIp = input.getText().toString().trim();
-            // Pornim receiver-ul care va asculta confirmările
+            // Pornim receiver-ul care va asculta confirmarile
             startReceiver();
             Toast.makeText(this, "Target: " + targetIp, Toast.LENGTH_SHORT).show();
         });
@@ -524,6 +545,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         b.show();
     }
 
+    // Opreste comunicarea UDP si curata harta
     private void stopNetworkModes() {
         isRunningNetwork = false;
         if (receiverThread != null) receiverThread.interrupt();
@@ -542,12 +564,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         followerMarker = null;
         targetIp = null;
         lockBtn.hide(); // Ascundem butonul cand oprim modul
-        isCameraLocked = false; // Resetăm starea
+        isCameraLocked = false; // Resetam starea
         lockBtn.setImageTintList(android.content.res.ColorStateList.valueOf(Color.BLACK));
     }
 
     // --- UTILS ---
 
+    // Cronometru pentru plimbare
     private void startTimer() {
         if (scheduler != null && !scheduler.isShutdown()) return;
         seconds = 0;
@@ -568,6 +591,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         timerText.setText("00:00");
     }
 
+    // Afiseaza ceasul curent al sistemului
     private void startRealTimeClock() {
         clockHandler.post(new Runnable() {
             @Override
@@ -579,6 +603,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    // Calculeaza ritmul (min/km) curent
     private String calculateCurrentPace(float segmentMeters, float seconds) {
         if (segmentMeters < 5 || seconds <= 0) return "0:00";
         float km = segmentMeters / 1000f;
@@ -586,6 +611,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return String.format(Locale.getDefault(), "%d:%02d", (int)(pace/60), (int)(pace%60));
     }
 
+    // Calculeaza ritmul mediu
     private String calculateAveragePace() {
         float km = totalDistanceMeters / 1000f;
         if (km <= 0) return "0:00";
@@ -602,6 +628,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lastUpdateTime = 0;
     }
 
+    // Salvarea datelor in baza de date Firebase
     private void saveWalkToFirebase() {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
         HashMap<String, Object> walk = new HashMap<>();
@@ -634,6 +661,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stopNetworkModes();
     }
 
+    // Preluare date meteo prin API
     private void fetchWeather(double lat, double lng) {
         String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&units=metric&appid=" + API_KEY;
         Volley.newRequestQueue(this).add(new JsonObjectRequest(Request.Method.GET, url, null,
@@ -648,6 +676,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }, error -> txtWeather.setText("Weather: Error")));
     }
 
+    // Clasa pentru structura pachetelor de date trimise prin retea
     public static class SyncLocationPacket {
         String sessionId;
         String type;
@@ -663,7 +692,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             this.timestamp = timestamp;
         }
     }
-    // Adaugă asta la finalul clasei, înainte de ultima acoladă
+    // Adauga asta la finalul clasei, inainte de ultima acolada
+    // Identifica IP-ul local pentru a putea fi partajat cu partenerul
     private String getMyIpAddress() {
         try {
             java.util.List<java.net.NetworkInterface> interfaces = java.util.Collections.list(java.net.NetworkInterface.getNetworkInterfaces());
@@ -678,7 +708,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 }
             }
-        } catch (Exception ex) { } // Ignorăm erorile
-        return "Nu s-a găsit IP";
+        } catch (Exception ex) { } // Ignoram erorile
+        return "Nu s-a gasit IP";
     }
 }
