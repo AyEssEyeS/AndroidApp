@@ -35,7 +35,7 @@ public class OpenWeather extends AppCompatActivity {
 
     // Constante pentru codul cererii de locatie si cheia API OpenWeatherMap
     private static final int LOCATION_REQUEST_CODE = 1001;
-    private static final String API_KEY = "3496e86f154d566be3a095951868974f";
+       private static final String API_KEY = BuildConfig.WEATHER_API_KEY;
 
     // Client pentru accesarea serviciilor de locatie Google (GPS)
     private FusedLocationProviderClient fusedLocationClient;

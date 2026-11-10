@@ -77,7 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private AppMode currentMode = AppMode.NORMAL;
 
     private static final int UDP_PORT = 50505;
-    private static final String API_KEY = "3496e86f154d566be3a095951868974f"; // Cheie API Weather
+    private static final String API_KEY = BuildConfig.WEATHER_API_KEY; // Cheie API Weather
     private static final float EAT_DISTANCE_METERS = 15.0f; // Distanta de interactiune in Maps
 
     // --- UI ELEMENTS ---
